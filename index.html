@@ -344,8 +344,8 @@ document.getElementById('addr-inp').addEventListener('keydown',function(e){if(e.
 async function doSearch(){
   var heroInp=document.getElementById('hero-inp');
   var sideInp=document.getElementById('addr-inp');
-  // Sync whichever input was used
-  var addr=(heroInp===document.activeElement?heroInp.value:sideInp.value).trim();
+  // Use whichever input has a value (handles mobile focus loss on button tap)
+  var addr=(heroInp.value.trim()||sideInp.value.trim());
   if(!addr)return;
   heroInp.value=addr;sideInp.value=addr;
   // Collapse hero after first search

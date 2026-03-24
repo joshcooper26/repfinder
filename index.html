@@ -228,7 +228,30 @@ function drawMap(){
         else{el.style('fill-opacity',rep?'0.1':'0.4').style('stroke',rep?'rgba(0,34,49,.03)':'rgba(0,34,49,.06)');}
       }else{if(rep&&REP_COLORS[rep])el.style('fill-opacity','0.75');}
     })
-    .on('click',function(ev,d){ev.stopPropagation();var fips=d.id.toString().padStart(5,'0'),asgn=getAsgn(fips);if(!asgn)return;document.getElementById('tt').classList.remove('on');highlightRep=null;drawMap();openPopup(asgn.rep,ev.clientX,ev.clientY);})
+    .on('click',function(ev,d){
+      ev.stopPropagation();
+      var fips=d.id.toString().padStart(5,'0');
+      var info=fips2co[fips]||{name:'Unknown',state:''};
+      var asgn=getAsgn(fips);
+      document.getElementById('tt').classList.remove('on');
+      highlightRep=null;
+      // Update pin and search bar to reflect clicked county
+      pinFips=fips;
+      var locLabel=(info.name?info.name+' County, ':'')+info.state;
+      document.getElementById('hero-inp').value=locLabel;
+      document.getElementById('pub-addr-inp').value=locLabel;
+      document.getElementById('hero').classList.add('collapsed');
+      var rb=document.getElementById('result-box');
+      if(asgn){
+        rb.className='result-box show found';
+        rb.innerHTML='<strong style="color:#007a00">✓ Covered</strong><div style="margin:4px 0"><strong>'+locLabel+'</strong></div><div>Rep: <strong style="color:'+(REP_COLORS[asgn.rep]||'#002231')+'">'+asgn.rep+'</strong></div>';
+      }else{
+        rb.className='result-box show miss';
+        rb.innerHTML='<strong style="color:#d72901">✗ Not Covered</strong><div style="margin:4px 0"><strong>'+locLabel+'</strong></div><div style="color:#5a7080">No rep assigned to this area.</div>';
+      }
+      drawMap();
+      if(asgn)openPopup(asgn.rep,ev.clientX,ev.clientY);
+    })
     .on('mousemove',function(ev,d){var fips=d.id.toString().padStart(5,'0'),info=fips2co[fips]||{name:'Unknown',state:''};var asgn=getAsgn(fips);var ttEl=document.getElementById('tt');var h='<div class="tt-name">'+info.name+' County</div><div class="tt-sub">'+info.state+'</div>';if(asgn){h+='<div class="tt-rep">'+asgn.rep+'</div><div class="tt-hint">Click for rep info</div>';}else{h+='<div style="color:rgba(255,255,255,.4);font-size:11px;font-style:italic">No rep assigned</div>';}ttEl.innerHTML=h;ttEl.classList.add('on');ttEl.style.left=Math.min(ev.clientX+14,window.innerWidth-260)+'px';ttEl.style.top=Math.min(ev.clientY+14,window.innerHeight-120)+'px';})
     .on('mouseleave',function(){document.getElementById('tt').classList.remove('on');});
   if(pinFips){

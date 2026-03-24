@@ -143,8 +143,8 @@ footer{background:var(--midnight);height:40px;display:flex;align-items:center;ju
     <div class="hero-headline">Schedule a <span>Demo</span></div>
     <div class="hero-sub">Find your local CN-Seamless rep and get a hands-on demo at your facility.</div>
     <div class="hero-search">
-      <input class="hero-inp" id="hero-inp" placeholder="Enter your address or city…" onkeydown="if(event.key==='Enter')doSearch()">
-      <button class="hero-btn" onclick="doSearch()">Find My Rep</button>
+      <input class="hero-inp" id="hero-inp" placeholder="Enter your address or city…" onkeydown="if(event.key==='Enter')doSearch('hero')">
+      <button class="hero-btn" onclick="doSearch('hero')">Find My Rep</button>
     </div>
   </div>
 </div>
@@ -154,8 +154,8 @@ footer{background:var(--midnight);height:40px;display:flex;align-items:center;ju
     <div class="sb">
       <div class="sb-title">Find Your Rep</div>
       <div class="search-wrap">
-        <input class="search-inp" id="addr-inp" placeholder="Enter your address or city…" onkeydown="if(event.key==='Enter')doSearch()">
-        <button class="search-btn" onclick="doSearch()">Check</button>
+        <input class="search-inp" id="pub-addr-inp" placeholder="Enter your address or city…" onkeydown="if(event.key==='Enter')doSearch('side')">
+        <button class="search-btn" onclick="doSearch('side')">Check</button>
       </div>
       <div class="result-box" id="result-box"></div>
     </div>
@@ -301,15 +301,16 @@ function openPopup(repName,clickX,clickY){
   document.getElementById('popup-title').textContent=groupName;
   document.getElementById('popup-sub').textContent=contacts.length?contacts.length+' rep'+(contacts.length!==1?'s':'')+' covering this territory':'';
   var body=document.getElementById('popup-body');body.innerHTML='';
-  if(!contacts.length){body.innerHTML='<div style="padding:20px;text-align:center;font-size:13px;color:#5a7080">No contact information available for this territory.</div>';}
-  else{contacts.forEach(function(rep){var color=REP_COLORS[repName]||'#002231';var initials=((rep.firstName||'?')[0]+((rep.lastName||'')[0]||'')).toUpperCase();var ce=rep.contactEmail||'',le=(rep.leadEmail&&rep.leadEmail!==ce)?rep.leadEmail:'',ph=rep.phone||'',terr=rep.localTerritory||'';var html='<div class="rep-card"><div class="rep-avatar" style="background:'+color+'">'+initials+'</div><div style="flex:1;min-width:0"><div class="rep-name">'+((rep.firstName||'')+' '+(rep.lastName||'')).trim()+'</div>';if(terr)html+='<div class="rep-terr">'+terr+'</div>';if(ce)html+='<div class="rep-contact"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:'+ce+'">'+ce+'</a></div>';if(le)html+='<div class="rep-contact" style="color:#a9202a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:'+le+'" style="color:#a9202a">'+le+' (leads)</a></div>';if(ph)html+='<div class="rep-contact"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.03 1.21 2 2 0 012 .03h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg><a href="tel:'+ph.replace(/[^0-9+]/g,'')+'">'+ph+'</a></div>';html+='</div></div>';body.innerHTML+=html;});}
-  var popup=document.getElementById('popup');popup.style.display='flex';popup.classList.add('on');
-  // Add CTA strip if contacts were found
+  // CTA strip at the TOP
   if(contacts.length){
     var cta=document.createElement('div');cta.className='popup-cta';
-    cta.innerHTML='<div class="popup-cta-text"><strong>Ready for a demo?</strong>Reach out to schedule a visit.</div><a class="popup-cta-btn" href="mailto:'+(contacts[0].contactEmail||'info@cn-seamless.com')+'">Schedule Demo</a>';
-    document.getElementById('popup-body').appendChild(cta);
+    var demoEmail=(contacts[0].contactEmail||'info@cn-seamless.com');
+    cta.innerHTML='<div class="popup-cta-text"><strong>Ready for a demo?</strong>Reach out to schedule a visit.</div><a class="popup-cta-btn" href="mailto:'+demoEmail+'?subject=CN-Seamless%20Demo%20Inquiry&cc=sales%40cn-seamless.com">Schedule Demo</a>';
+    body.appendChild(cta);
   }
+  if(!contacts.length){body.innerHTML='<div style="padding:20px;text-align:center;font-size:13px;color:#5a7080">No contact information available for this territory.</div>';}
+  else{contacts.forEach(function(rep){var color=REP_COLORS[repName]||'#002231';var initials=((rep.firstName||'?')[0]+((rep.lastName||'')[0]||'')).toUpperCase();var ce=rep.contactEmail||'',le=(rep.leadEmail&&rep.leadEmail!==ce)?rep.leadEmail:'',ph=rep.phone||'',terr=rep.localTerritory||'';var subj='?subject=CN-Seamless%20Demo%20Inquiry&cc=sales%40cn-seamless.com';var html='<div class="rep-card"><div class="rep-avatar" style="background:'+color+'">'+initials+'</div><div style="flex:1;min-width:0"><div class="rep-name">'+((rep.firstName||'')+' '+(rep.lastName||'')).trim()+'</div>';if(terr)html+='<div class="rep-terr">'+terr+'</div>';if(ce)html+='<div class="rep-contact"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:'+ce+subj+'">'+ce+'</a></div>';if(le)html+='<div class="rep-contact" style="color:#a9202a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:'+le+subj+'" style="color:#a9202a">'+le+' (leads)</a></div>';if(ph)html+='<div class="rep-contact"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.03 1.21 2 2 0 012 .03h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg><a href="tel:'+ph.replace(/[^0-9+]/g,'')+'">'+ph+'</a></div>';html+='</div></div>';body.innerHTML+=html;});}
+  var popup=document.getElementById('popup');popup.style.display='flex';popup.classList.add('on');
   positionPopup(popup,clickX,clickY);
   makeDraggable(popup,document.getElementById('popup-hdr'));
 }
@@ -340,12 +341,14 @@ function renderLegend(){
     lg.appendChild(item);
   });
 }
-document.getElementById('addr-inp').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch();});
-async function doSearch(){
+document.getElementById('pub-addr-inp').addEventListener('keydown',function(e){if(e.key==='Enter')doSearch('side');});
+var lastSearchSource='hero';
+async function doSearch(source){
   var heroInp=document.getElementById('hero-inp');
-  var sideInp=document.getElementById('addr-inp');
-  // Use whichever input has a value (handles mobile focus loss on button tap)
-  var addr=(heroInp.value.trim()||sideInp.value.trim());
+  var sideInp=document.getElementById('pub-addr-inp');
+  // Read from the source that triggered the search
+  var addr=(source==='side'?sideInp.value:heroInp.value).trim();
+  if(!addr)addr=(heroInp.value.trim()||sideInp.value.trim());
   if(!addr)return;
   heroInp.value=addr;sideInp.value=addr;
   // Collapse hero after first search

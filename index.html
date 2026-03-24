@@ -105,8 +105,31 @@ header{background:var(--midnight);height:58px;padding:0 28px;display:flex;align-
 .popup-cta-btn{flex-shrink:0;padding:7px 14px;background:var(--red);color:#fff;border:none;border-radius:4px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .15s}
 .popup-cta-btn:hover{background:#c0252f}
 footer{background:var(--midnight);height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-top:2px solid var(--red)}
-.footer-txt{font-family:'Saira',sans-serif;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+/* ── MOBILE ── */
+@media(max-width:640px){
+  body{overflow:auto;height:auto;min-height:100vh}
+  header{height:48px;padding:0 16px}
+  .brand svg{height:22px!important}
+  .tagline{display:none}
+  .hero{padding:20px 16px 18px}
+  .hero.collapsed{padding:0;max-height:0}
+  .hero-headline{font-size:22px}
+  .hero-sub{font-size:12px;margin-bottom:14px}
+  .hero-inp{font-size:14px;padding:10px 12px}
+  .hero-btn{font-size:13px;padding:10px 14px}
+  .layout{flex-direction:column;overflow:visible;height:auto}
+  .map-area{width:100%;height:52vw;min-height:220px;max-height:320px;flex:none;border-bottom:2px solid var(--border)}
+  .sidebar{width:100%;border-left:none;border-top:1px solid var(--border);overflow-y:visible;box-shadow:none;flex-shrink:0}
+  .zoom-bar{display:none}
+  footer{height:32px}
+  footer svg{height:16px!important}
+  /* popup becomes bottom sheet on mobile */
+  .popup{position:fixed!important;left:0!important;right:0!important;bottom:0!important;top:auto!important;width:100%!important;max-width:100%!important;min-width:0!important;border-radius:12px 12px 0 0!important;max-height:75vh;transform:none!important}
+  .popup-hdr{cursor:default;border-radius:12px 12px 0 0}
+  .popup-hdr::before{content:'';display:block;width:36px;height:4px;background:rgba(255,255,255,.25);border-radius:2px;margin:0 auto 10px}
+  .tt{display:none}
+}
 </style>
 </head>
 <body>
@@ -246,6 +269,7 @@ svgEl=document.getElementById('map-svg');
 document.getElementById('map-area').addEventListener('wheel',function(){requestAnimationFrame(syncZUI);},{passive:true});
 // ── POPUP ──
 function positionPopup(popup,clickX,clickY){
+  if(window.innerWidth<=640){popup.style.left='';popup.style.top='';return;}
   var pw=420;
   var body=document.getElementById('popup-body');
   var estimatedH=Math.min(window.innerHeight-80,body.scrollHeight+100||400);
@@ -262,6 +286,7 @@ function makeDraggable(popup,handle){
   if(handle._dragBound)return;handle._dragBound=true;
   var sx,sy,sl,st;
   handle.addEventListener('mousedown',function(e){
+    if(window.innerWidth<=640)return;
     if(e.target.closest('button'))return;
     sx=e.clientX;sy=e.clientY;sl=parseInt(popup.style.left)||0;st=parseInt(popup.style.top)||0;
     handle.style.cursor='grabbing';
